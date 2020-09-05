@@ -24,6 +24,8 @@ class UserSignup(Resource):
         400: 'Validation Error'
     })
     def post(self):
+        """ User Sign up """
+
         # Validation
         if not request.is_json:
             return {"result": -1, "msg": "Missing JSON in request"}, 400
@@ -70,6 +72,8 @@ class UserLogin(Resource):
         400: 'Validation Error',
     })
     def put(self):
+        """ User Log in """ 
+
         # Validation
         if not request.is_json:
             return {"result": -1, "msg": "Missing JSON in request"}, 400
@@ -104,7 +108,13 @@ class UserLogin(Resource):
 @api.route('/logout')
 class UserLogout(Resource):
     @api.expect(api.model('logout', {'session': fields.String(required=True)}))
+    @api.doc(responses={
+        200: 'Success',
+        400: 'Validation Error'
+    })
     def delete(self):
+        """ User Log out """
+
         # Validation
         if not request.is_json:
             return {"result": -1, "msg": "Missing JSON in request"}, 400
@@ -131,7 +141,13 @@ class UserLogout(Resource):
 @api.route('/signout')
 class Signout(Resource):
     @api.expect(api.model('logout', {'session': fields.String(required=True)}))
+    @api.doc(responses={
+        200: 'Success',
+        400: 'Validation Error'
+    })
     def delete(self):
+        """ User Sign out """
+
         # Validation
         if not request.is_json:
             return {"result": -1, "msg": "Missing JSON in request"}, 400
@@ -160,18 +176,25 @@ class Signout(Resource):
         
 @api.route('/user/<string:id>')
 class UserInfo(Resource):
+    @api.doc(responses={
+        200: 'Success',
+        400: 'Validation Error'
+    })
     def get(self, id):
         """ Get Selected User Infomations about session """
+
         # Valition
         if not id:
             return {"result": -1, "msg": "Missing id parameter"}, 400
         
+        # if user signed out, dont show info
         user = User.query.filter_by(id=id).first()
         if not user or (user and user.signout_dt):
             return {"result": -1, "msg": "Cannot find User [{}]".format(id)}, 400
 
         sessions = Session.query.filter_by(id=id).all()
 
+        # make response msg
         res = {
             "result": 0,
             "user_info": user.to_dictionary(),

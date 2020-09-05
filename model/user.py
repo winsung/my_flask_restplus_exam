@@ -13,6 +13,7 @@ class User(db.Model):
         return '<User %r>' % self.user_id
 
     def to_dictionary(self):
+        """ for response """
         return {
             "id": self.id,
             "last_logout_dt": None if not self.last_logout_dt else str(self.last_logout_dt),
